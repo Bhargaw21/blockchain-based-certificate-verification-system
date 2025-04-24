@@ -48,3 +48,4 @@ web3 @ git+https://github.com/ethereum/web3.py.git@168fceaf5c6829a8edeb510b99794
 websockets==10.4
 Werkzeug==2.2.3
 yarl==1.8.2
+python-dotenv==1.1.0

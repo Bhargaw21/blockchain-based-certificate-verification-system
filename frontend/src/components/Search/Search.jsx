@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
-import "./Search.css";
-import { FcLibrary, FcGlobe, FcGraduationCap } from "react-icons/fc";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { FcGlobe, FcGraduationCap, FcLibrary } from "react-icons/fc";
 import { AuthContext } from "../../CustomHooks/Context/AuthProvider";
 import api from "../../api/api";
-import { MenuItemUnstyled } from "@mui/base";
+import "./Search.css";
+
 
 const Search = ({
   data,
