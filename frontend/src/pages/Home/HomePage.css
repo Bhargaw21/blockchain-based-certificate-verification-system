@@ -1,0 +1,116 @@
+/* HomePage.css */
+
+.home-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    position: relative;
+    overflow: hidden;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  /* Optional decorative circles */
+  .home-wrapper::before,
+  .home-wrapper::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    filter: blur(50px);
+    z-index: 0;
+  }
+  .home-wrapper::before {
+    width: 300px;
+    height: 300px;
+    background: #ffffff;
+    top: -50px;
+    left: -50px;
+  }
+  .home-wrapper::after {
+    width: 400px;
+    height: 400px;
+    background: #000000;
+    bottom: -100px;
+    right: -100px;
+  }
+  
+  .home-title {
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 10px;
+    z-index: 1;
+  }
+  
+  .home-subtitle {
+    font-size: 1.2rem;
+    color: #e0f7fa;
+    margin-bottom: 40px;
+    z-index: 1;
+  }
+  
+  .role-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 10px;
+    z-index: 1;
+  }
+  
+  .role-card {
+    width: 260px;
+    padding: 30px 20px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .role-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .role-card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+  
+  .role-card p {
+    font-size: 1rem;
+    color: #f1f1f1;
+  }
+  
+  /* Color accents */
+  .user {
+    border-left: 5px solid #00e676;
+  }
+  .school {
+    border-left: 5px solid #00bcd4;
+  }
+  .admin {
+    border-left: 5px solid #ffc107;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .role-card {
+      width: 85%;
+    }
+  
+    .home-title {
+      font-size: 2rem;
+    }
+  
+    .home-subtitle {
+      font-size: 1rem;
+    }
+  }
+  

@@ -25,20 +25,30 @@ export default function SignIn({ authenticated, setToken, token }) {
     setIsLoading(true);
 
     const data = {
-      email: signInEmail, // ✅ FIXED here
+      email: signInEmail,
       password: signInPassword,
     };
 
     api
       .post("/login", data)
       .then((response) => {
-        localStorage.setItem("appCertificate", response.data.token);
-        setToken(localStorage.getItem("appCertificate"));
-        navigate("/user/dashboard");
+        const token = response.data.token;
+        localStorage.setItem("appCertificate", token);
+        setToken(token);
+
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+
+        if (tokenPayload.role === "user") {
+          navigate("/user/dashboard");
+        } else if (tokenPayload.role === "school") {
+          navigate("/school/dashboard");
+        } else {
+          navigate("/");
+        }
       })
       .catch((error) => {
         console.error(error);
-        if (error.response && error.response.data && error.response.data.message) {
+        if (error.response?.data?.message) {
           setSignUpMessage(error.response.data.message);
         } else {
           setSignUpMessage("An error occurred while connecting to the server.");

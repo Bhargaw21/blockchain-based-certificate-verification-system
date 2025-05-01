@@ -15,11 +15,12 @@ export default function SignInSchool({ authenticated, setToken, userRole }) {
   }
 
   const handleSignIn = (event) => {
-    event.preventDefault();  // ✅ Add () here
+    event.preventDefault();
     if (!signInEmail || !signInPassword) {
       setSignUpMessage("Please fill out all fields.");
       return;
     }
+
     const data = {
       email: signInEmail,
       password: signInPassword,
@@ -28,13 +29,23 @@ export default function SignInSchool({ authenticated, setToken, userRole }) {
     api
       .post("/login", data)
       .then((response) => {
-        localStorage.setItem("appCertificate", response.data.token);
-        setToken(response.data.token);
-        navigate("/school/dashboard");  // ✅ Move after success
+        const token = response.data.token;
+        localStorage.setItem("appCertificate", token);
+        setToken(token);
+
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+
+        if (tokenPayload.role === "school") {
+          navigate("/school/dashboard");
+        } else if (tokenPayload.role === "user") {
+          navigate("/user/dashboard");
+        } else {
+          navigate("/");
+        }
       })
       .catch((error) => {
         console.error(error);
-        if (error.response && error.response.data && error.response.data.message) {
+        if (error.response?.data?.message) {
           setSignUpMessage(error.response.data.message);
         } else {
           setSignUpMessage("An error occurred while connecting to the server");
@@ -47,7 +58,7 @@ export default function SignInSchool({ authenticated, setToken, userRole }) {
       {signUpMessage && (
         <MessagePopUp message={signUpMessage} setMessage={setSignUpMessage} />
       )}
-      <form onSubmit={handleSignIn}> {/* ✅ Correct way */}
+      <form onSubmit={handleSignIn}>
         <div>
           <h1>Sign In</h1>
         </div>
