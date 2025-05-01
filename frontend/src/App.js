@@ -1,16 +1,14 @@
 import { useContext } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
-import Signup from "./pages/SignUp/SignUp";
-import UserPage from "./pages/UserPage/UserPage";
-import School from "./pages/School/School";
 import { AuthContext } from "./CustomHooks/Context/AuthProvider";
-import SignUpSchoolPage from "./pages/SignUpSchoolPage/SignUpSchoolPage";
 import Admin from "./pages/Admin/Admin";
-import VerifyCertificate from "./pages/VerifyCertificate/VerifyCertificate";
 import AdminSignup from "./pages/AdminSignup/AdminSignup";
-// import RequireAuth from "./components/RequireAuth/RequireAuth";
-// import Unauthorized from "./components/Unauthorized/Unauthorized";
+import School from "./pages/School/School";
+import Signup from "./pages/SignUp/SignUp";
+import SignUpSchoolPage from "./pages/SignUpSchoolPage/SignUpSchoolPage";
+import UserPage from "./pages/UserPage/UserPage";
+import VerifyCertificate from "./pages/VerifyCertificate/VerifyCertificate";
 
 const ProtectedRoute = ({
   component: Component,

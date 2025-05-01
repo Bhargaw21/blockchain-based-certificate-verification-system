@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import api from "../../api/api.jsx";
-import TextInput from "../TextInput/TextInput";
-import MessagePopUp from "../MessagePopUp/MessagePopUp";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/api.jsx";
+import MessagePopUp from "../MessagePopUp/MessagePopUp";
+import TextInput from "../TextInput/TextInput";
 
 export default function SignInSchool({ authenticated, setToken, userRole }) {
   const [signInEmail, setSignInEmail] = useState("");
@@ -14,29 +14,31 @@ export default function SignInSchool({ authenticated, setToken, userRole }) {
     navigate("/school/dashboard");
   }
 
-  const handleSingIn = (event) => {
-    event.preventDefault();
+  const handleSignIn = (event) => {
+    event.preventDefault();  // ✅ Add () here
     if (!signInEmail || !signInPassword) {
       setSignUpMessage("Please fill out all fields.");
       return;
     }
     const data = {
-      userMail: signInEmail,
+      email: signInEmail,
       password: signInPassword,
     };
 
     api
-      .post("/login-admin", data)
+      .post("/login", data)
       .then((response) => {
         localStorage.setItem("appCertificate", response.data.token);
-        setToken(localStorage.getItem("appCertificate"));
+        setToken(response.data.token);
+        navigate("/school/dashboard");  // ✅ Move after success
       })
-      // .then(() => {
-      //   navigate("/school/dashboard");
-      // })
       .catch((error) => {
-        console.log(error);
-        setSignUpMessage("An error occurred while connecting th the server");
+        console.error(error);
+        if (error.response && error.response.data && error.response.data.message) {
+          setSignUpMessage(error.response.data.message);
+        } else {
+          setSignUpMessage("An error occurred while connecting to the server");
+        }
       });
   };
 
@@ -45,27 +47,27 @@ export default function SignInSchool({ authenticated, setToken, userRole }) {
       {signUpMessage && (
         <MessagePopUp message={signUpMessage} setMessage={setSignUpMessage} />
       )}
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={handleSignIn}> {/* ✅ Correct way */}
         <div>
           <h1>Sign In</h1>
         </div>
         <TextInput
-          label="school email"
-          type="school email"
-          name="school email"
-          placeholder="school email"
+          label="School Email"
+          type="email"
+          name="email"
+          placeholder="School Email"
           value={signInEmail}
           setValue={setSignInEmail}
         />
         <TextInput
-          label="password"
+          label="Password"
           type="password"
           name="password"
           placeholder="********"
           value={signInPassword}
           setValue={setSignInPassword}
         />
-        <button className="btn_login button-block" onClick={handleSingIn}>
+        <button className="btn_login button-block" type="submit">
           Sign In
         </button>
       </form>

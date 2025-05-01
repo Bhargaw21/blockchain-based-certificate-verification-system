@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import api from "../../api/api.jsx";
-import TextInput from "../TextInput/TextInput";
-import MessagePopUp from "../MessagePopUp/MessagePopUp";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/api.jsx";
 import LoadingAnimation from "../Loading/Loading.jsx";
+import MessagePopUp from "../MessagePopUp/MessagePopUp";
+import TextInput from "../TextInput/TextInput";
 
 export default function SignIn({ authenticated, setToken, token }) {
   const [signInEmail, setSignInEmail] = useState("");
@@ -16,15 +16,16 @@ export default function SignIn({ authenticated, setToken, token }) {
     navigate("/user/dashboard");
   }
 
-  const handleSingIn = (event) => {
+  const handleSignIn = (event) => {
     event.preventDefault();
     if (!signInEmail || !signInPassword) {
       setSignUpMessage("Please fill out all fields.");
       return;
     }
-    setIsLoading(true); // set isLoading state to true when API call is made
+    setIsLoading(true);
+
     const data = {
-      userMail: signInEmail,
+      email: signInEmail, // ✅ FIXED here
       password: signInPassword,
     };
 
@@ -33,15 +34,18 @@ export default function SignIn({ authenticated, setToken, token }) {
       .then((response) => {
         localStorage.setItem("appCertificate", response.data.token);
         setToken(localStorage.getItem("appCertificate"));
-      })
-      .then(() => {
         navigate("/user/dashboard");
       })
       .catch((error) => {
-        setSignUpMessage("An error occurred while connecting th the server");
+        console.error(error);
+        if (error.response && error.response.data && error.response.data.message) {
+          setSignUpMessage(error.response.data.message);
+        } else {
+          setSignUpMessage("An error occurred while connecting to the server.");
+        }
       })
       .finally(() => {
-        setIsLoading(false); // set isLoading state back to false after API call is finished
+        setIsLoading(false);
       });
   };
 
@@ -52,7 +56,7 @@ export default function SignIn({ authenticated, setToken, token }) {
         <MessagePopUp message={signUpMessage} setMessage={setSignUpMessage} />
       )}
       {!isLoading && (
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handleSignIn}>
           <div>
             <h1>Sign In</h1>
           </div>
@@ -72,7 +76,7 @@ export default function SignIn({ authenticated, setToken, token }) {
             value={signInPassword}
             setValue={setSignInPassword}
           />
-          <button className="btn_login button-block" onClick={handleSingIn}>
+          <button className="btn_login button-block" type="submit">
             Sign In
           </button>
         </form>

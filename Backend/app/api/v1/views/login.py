@@ -11,68 +11,52 @@ from datetime import datetime, timedelta
 import jwt
 import os
 
-
 @app_views.route('/login', methods=['POST'])
+@app_views.route('/login-admin', methods=['POST'])  # keeping this too if needed
 def login():
-    # Get the provided username and password from the request
+    # Get the provided email and password from the request
     data = request.get_json()
-    # Check if the password field is empty
-    if 'password' not in data or not data['password']:
-        return jsonify({'message': 'Password field is required'}), 400
 
-    # Check if the userMail field is empty
-    if 'userMail' not in data or not data['userMail']:
-        return jsonify({'message': 'Email field is required'}), 400
+    # Correct field checking
+    if not data or 'email' not in data or 'password' not in data:
+        return jsonify({'message': 'Email and Password are required'}), 400
 
-    # Retrieve the username and password from the request data
-    user_mail = data.get('userMail')
+    user_mail = data.get('email')
     password = data.get('password')
+
     user = storage.get_email(User, user_mail)
     school = storage.get_email(School, user_mail)
+
     if not user and not school:
-        return jsonify({'message': 'Invalid password and name'}), 401
+        return jsonify({'message': 'Invalid email or password'}), 401
 
-    if user:
-        if user.check_password(password):
-            # If the password is valid, generate an authentication token
-            try:
-                exp_timestamp = datetime.timestamp(
-                    datetime.utcnow() + timedelta(days=1))
-                token = jwt.encode({
-                    'first_name': user.first_name,
-                    'user_email': user.email,
-                    'user_id': user.id,
-                    'last_name': user.last_name,
-                    'exp': exp_timestamp,
-                    'role': user.role,
-                },
-                    os.environ['SECRET_KEY']
-                )
-                return jsonify({'token': token})
-            except Exception as e:
-                return jsonify({'success': False, 'message': str(e)}), 400
-        else:
-            # If the password is invalid, return an error message
-            return jsonify({'message': 'Invalid password'}), 401
+    if user and user.check_password(password):
+        try:
+            exp_timestamp = datetime.timestamp(datetime.utcnow() + timedelta(days=1))
+            token = jwt.encode({
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'user_email': user.email,
+                'user_id': user.id,
+                'role': user.role,
+                'exp': exp_timestamp,
+            }, os.environ['SECRET_KEY'])
+            return jsonify({'token': token})
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
 
-    if school:
-        if school.check_password(password):
-            # If the password is valid, generate an authentication token
-            try:
-                exp_timestamp = datetime.timestamp(
-                    datetime.utcnow() + timedelta(days=1))
-                token = jwt.encode({
-                    'first_name': school.school_name,
-                    'user_email': school.email,
-                    'user_id': school.id,
-                    'exp': exp_timestamp,
-                    'role': school.role,
-                },
-                    os.environ['SECRET_KEY']
-                )
-                return jsonify({'token': token})
-            except Exception as e:
-                return jsonify({'success': False, 'message': str(e)}), 400
-        else:
-            # If the password is invalid, return an error message
-            return jsonify({'message': 'Invalid password'}), 401
+    if school and school.check_password(password):
+        try:
+            exp_timestamp = datetime.timestamp(datetime.utcnow() + timedelta(days=1))
+            token = jwt.encode({
+                'first_name': school.school_name,
+                'user_email': school.email,
+                'user_id': school.id,
+                'role': school.role,
+                'exp': exp_timestamp,
+            }, os.environ['SECRET_KEY'])
+            return jsonify({'token': token})
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
+
+    return jsonify({'message': 'Invalid email or password'}), 401
