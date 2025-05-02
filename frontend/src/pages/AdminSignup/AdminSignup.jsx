@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SignInAdmin from "../../components/AdminComponents/SignInAdmin/SignInAdmin";
-import "./AdminSignup.css";
 import { AuthContext } from "../../CustomHooks/Context/AuthProvider";
+import "./AdminSignup.css";
 
 export default function AdminSignup() {
   const logInRef = useRef(null);
@@ -10,10 +10,12 @@ export default function AdminSignup() {
   const { authenticated, userRole, setToken } = useContext(AuthContext);
 
   useEffect(() => {
+    console.log("Auth Status:", authenticated, "Role:", userRole);
     if (authenticated && userRole === "admin") {
       navigate("/admin/dashboard");
     }
   }, [authenticated, navigate, userRole]);
+  
 
   return (
     <div className="SignUpForm">

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import api from "../../../api/api.jsx";
-import TextInput from "../../TextInput/TextInput.jsx";
-import MessagePopUp from "../../MessagePopUp/MessagePopUp.jsx";
 import { useNavigate } from "react-router-dom";
+import api from "../../../api/api.jsx";
+import MessagePopUp from "../../MessagePopUp/MessagePopUp.jsx";
+import TextInput from "../../TextInput/TextInput.jsx";
 
 export default function SignInAdmin({ authenticated, setToken, userRole }) {
   const [signInEmail, setSignInEmail] = useState("");
@@ -10,31 +10,32 @@ export default function SignInAdmin({ authenticated, setToken, userRole }) {
   const [signUpMessage, setSignUpMessage] = useState("");
   const navigate = useNavigate();
 
-  if (authenticated && userRole === "school") {
-    navigate("/school/dashboard");
+  if (authenticated && userRole === "admin") {
+    navigate("/admin/dashboard");
   }
 
-  const handleSingIn = (event) => {
+  const handleSignIn = async (event) => {
     event.preventDefault();
     if (!signInEmail || !signInPassword) {
       setSignUpMessage("Please fill out all fields.");
       return;
     }
+
     const data = {
-      userMail: signInEmail,
+      email: signInEmail,
       password: signInPassword,
     };
 
-    api
-      .post("/login-admin", data)
-      .then((response) => {
-        localStorage.setItem("appCertificate", response.data.token);
-        setToken(localStorage.getItem("appCertificate"));
-      })
-      .catch((error) => {
-        console.log(error);
-        setSignUpMessage("An error occurred while connecting th the server");
-      });
+    try {
+      const response = await api.post("/login-admin", data);
+      const token = response.data.token;
+      localStorage.setItem("appCertificate", token);
+      setToken(token);
+      navigate("/admin/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+      setSignUpMessage("An error occurred while connecting to the server.");
+    }
   };
 
   return (
@@ -42,27 +43,27 @@ export default function SignInAdmin({ authenticated, setToken, userRole }) {
       {signUpMessage && (
         <MessagePopUp message={signUpMessage} setMessage={setSignUpMessage} />
       )}
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={handleSignIn}>
         <div>
-          <h1>Sign In</h1>
+          <h1>Admin Sign In</h1>
         </div>
         <TextInput
-          label="admin email"
-          type="admin email"
-          name="admin email"
-          placeholder="admin email"
+          label="Admin Email"
+          type="email"
+          name="adminEmail"
+          placeholder="admin@example.com"
           value={signInEmail}
           setValue={setSignInEmail}
         />
         <TextInput
-          label="password"
+          label="Password"
           type="password"
           name="password"
           placeholder="********"
           value={signInPassword}
           setValue={setSignInPassword}
         />
-        <button className="btn_login button-block" onClick={handleSingIn}>
+        <button className="btn_login button-block" type="submit">
           Sign In
         </button>
       </form>
