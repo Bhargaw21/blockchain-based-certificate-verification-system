@@ -25,3 +25,6 @@ Flask libraries: Flask, Flask-RESTful, Flask-CORS, SQLAlchemy
 
 Hardhat (for Ethereum local blockchain)
 
+![WhatsApp Image 2025-05-01 at 20 57 38](https://github.com/user-attachments/assets/f4d93d42-cf73-47a4-b623-0126d0308974)
+
+
